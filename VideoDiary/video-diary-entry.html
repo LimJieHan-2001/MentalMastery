@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <link rel="icon" href="/favicon.ico" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#000000" />
+  <title>Video Diary Entry</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Outfit%3A600%2C700"/>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro%3A600%2C700"/>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto%3A700"/>
+  <link rel="stylesheet" href="./styles/video-diary-entry.css"/>
+</head>
+<body>
+<div class="video-diary-entry-uxV">
+  <div class="group-33024-EUy">
+    <div class="rectangle-81-zDF">
+    </div>
+    <div class="group-33007-Vvh">
+      <div class="logobottom-dn1">
+        <img class="mask-group-CKK" src="./assets/mask-group-RsP.png"/>
+        <p class="mental-mastery-hWy">mental mastery</p>
+      </div>
+      <div class="auto-group-5xrv-m13">
+        <div class="navtop-GiV">
+          <p class="home-bkm">Home</p>
+          <p class="about-vo3">About</p>
+          <p class="feature-sTP">Feature</p>
+        </div>
+        <div class="contactusbutton-1Zb">CONTACT US</div>
+      </div>
+    </div>
+  </div>
+  <div class="auto-group-c84q-HGD">
+    <img class="vector-1-pG9" src="./assets/vector-1.png"/>
+    <div class="group-33038-k9o">
+      <div class="auto-group-zhm3-gZF">
+        <div class="entry-cSu">entry</div>
+        <div class="group-33034-KcD">
+          <div class="title-gBs">title</div>
+          <div class="rectangle-137-aY9">
+          </div>
+        </div>
+        <div class="group-33035-kb3">
+          <div class="rectangle-138-WKK">
+          </div>
+          <div class="description-EFK">description</div>
+        </div>
+      </div>
+      <div class="auto-group-yowf-7K7">
+        <div class="group-33036-SsB">
+          <div class="rectangle-139-AYH">
+          </div>
+          <div class="record-button-hHK">record</div>
+        </div>
+        <div class="group-33037-Y33">
+          <div class="rectangle-140-UxH">
+          </div>
+          <div class="record-button-Rcd">upload</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+
+
+<script>
+  let mediaRecorder;
+  let chunks = [];
+  let isRecording = false;
+
+  // Create a video element for the live feed
+  const liveVideo = document.createElement('video');
+  liveVideo.autoplay = true;
+  liveVideo.muted = true;
+
+  // Insert the live video element into rectangle-139-AYH
+  const liveContainer = document.querySelector('.rectangle-139-AYH');
+  liveContainer.appendChild(liveVideo);
+
+  document.querySelector('.record-button-hHK').addEventListener('click', function() {
+    if (!isRecording) {
+      navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+        .then(stream => {
+          // Display the live camera feed
+          liveVideo.srcObject = stream;
+
+          mediaRecorder = new MediaRecorder(stream);
+          mediaRecorder.start();
+
+          mediaRecorder.ondataavailable = function(e) {
+            chunks.push(e.data);
+          };
+
+          mediaRecorder.onstop = function() {
+            const blob = new Blob(chunks, { type: 'video/webm' });
+            chunks = [];
+            const videoURL = URL.createObjectURL(blob);
+
+            // Create a video element for the recorded video
+            const recordedVideo = document.createElement('video');
+            recordedVideo.src = videoURL;
+            recordedVideo.controls = true;
+            recordedVideo.load();
+
+            // Insert the recorded video element into rectangle-140-UxH
+            const recordedContainer = document.querySelector('.rectangle-140-UxH');
+            recordedContainer.innerHTML = ''; // Clear the container
+            recordedContainer.appendChild(recordedVideo); // Append the video element
+
+            // Optionally, play the video
+            recordedVideo.play();
+          };
+
+          this.textContent = 'Stop';
+          isRecording = true;
+        });
+    } else {
+      mediaRecorder.stop();
+      this.textContent = 'Record';
+      isRecording = false;
+    }
+  });
+</script>

@@ -80,46 +80,61 @@
   liveContainer.appendChild(liveVideo);
 
   document.querySelector('.record-button-hHK').addEventListener('click', function() {
-    if (!isRecording) {
-      navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-        .then(stream => {
-          // Display the live camera feed
-          liveVideo.srcObject = stream;
+  if (!isRecording) {
+    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+      .then(stream => {
+        // Display the live camera feed
+        liveVideo.srcObject = stream;
 
-          mediaRecorder = new MediaRecorder(stream);
-          mediaRecorder.start();
+        mediaRecorder = new MediaRecorder(stream);
+        mediaRecorder.start();
 
-          mediaRecorder.ondataavailable = function(e) {
-            chunks.push(e.data);
-          };
+        mediaRecorder.ondataavailable = function(e) {
+          chunks.push(e.data);
+        };
 
-          mediaRecorder.onstop = function() {
-            const blob = new Blob(chunks, { type: 'video/webm' });
-            chunks = [];
-            const videoURL = URL.createObjectURL(blob);
+        // Store the blob globally so it can be accessed in the button click event handler
+        let recordedBlob;
 
-            // Create a video element for the recorded video
-            const recordedVideo = document.createElement('video');
-            recordedVideo.src = videoURL;
-            recordedVideo.controls = true;
-            recordedVideo.load();
+        mediaRecorder.onstop = function() {
+          recordedBlob = new Blob(chunks, { type: 'video/webm' });
+          chunks = [];
+          const videoURL = URL.createObjectURL(recordedBlob);
 
-            // Insert the recorded video element into rectangle-140-UxH
-            const recordedContainer = document.querySelector('.rectangle-140-UxH');
-            recordedContainer.innerHTML = ''; // Clear the container
-            recordedContainer.appendChild(recordedVideo); // Append the video element
+          // Create a video element for the recorded video
+          const recordedVideo = document.createElement('video');
+          recordedVideo.src = videoURL;
+          recordedVideo.controls = true;
+          recordedVideo.load();
 
-            // Optionally, play the video
-            recordedVideo.play();
-          };
+          // Insert the recorded video element into rectangle-140-UxH
+          const recordedContainer = document.querySelector('.rectangle-140-UxH');
+          recordedContainer.innerHTML = ''; // Clear the container
+          recordedContainer.appendChild(recordedVideo); // Append the video element
+        };
 
-          this.textContent = 'Stop';
-          isRecording = true;
+        // Add an event listener to the record-button-Rcd button
+        document.querySelector('.record-button-Rcd').addEventListener('click', function() {
+          // Create a FormData object
+          const formData = new FormData();
+          formData.append('video', recordedBlob, 'recorded.webm');
+
+          // Send the FormData object to a server-side script
+          fetch('http://localhost/upload.php', {
+            method: 'POST',
+            body: formData
+          })
+          .then(response => response.text())
+          .then(data => console.log(data))
+          .catch(error => console.error(error));
         });
-    } else {
-      mediaRecorder.stop();
-      this.textContent = 'Record';
-      isRecording = false;
-    }
-  });
+
+        this.textContent = 'Stop';
+        isRecording = true;
+      });
+  } else {
+    mediaRecorder.stop();
+    this.textContent = 'Record';
+  }
+});
 </script>

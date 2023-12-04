@@ -2,6 +2,9 @@ import cv2
 from deepface import DeepFace
 from collections import Counter
 
+import requests
+import os
+import glob
 
 # Load pre-trained model for facial emotion recognition
 model = DeepFace.build_model("Emotion")
@@ -16,8 +19,28 @@ emotion_counter = Counter()
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
 # Open video file
-video_path = "C:/XAMPP/htdocs/uploads/recorded.webm"
+# video_path = "C:/XAMPP/htdocs/uploads/recorded.webm" //specify a path to test
+
+# Directory path
+dir_path = "C:/XAMPP/htdocs/uploads/"
+
+# Get list of all files, and sort them by creation date
+files = glob.glob(dir_path + "*.webm")
+files.sort(key=os.path.getctime, reverse=True)
+
+# Get the most recently created file
+latest_file = files[0]
+
+# Now you can use latest_file as your video path
+video_path = latest_file
+
 cap = cv2.VideoCapture(video_path)
+
+frame_width = int(cap.get(3))
+frame_height = int(cap.get(4))
+
+# Create a VideoWriter object
+out = cv2.VideoWriter('annotated_video.avi', cv2.VideoWriter_fourcc('D','I','V','X'), 10, (frame_width, frame_height))
 
 while True:
     # Capture frame-by-frame
@@ -58,6 +81,9 @@ while True:
         cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
         cv2.putText(frame, emotion, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 0, 255), 2)
 
+    # Write the resulting frame to the output video file
+    out.write(frame)
+
     # Display the resulting frame
     cv2.imshow('Real-time Emotion Detection', frame)
 
@@ -68,6 +94,10 @@ while True:
 # Determine the most frequently detected emotion
 most_common_emotion = emotion_counter.most_common(1)[0][0]
 print(f"The most common emotion in the video was: {most_common_emotion}")
+
+# At the end of your script, write the output to a file
+with open('emotion_output.txt', 'w') as f:
+    f.write(f"The most common emotion in the video was: {most_common_emotion}")
 
 # Release the capture and close all windows
 cap.release()

@@ -70,6 +70,9 @@
   let chunks = [];
   let isRecording = false;
 
+  // Store the blob globally so it can be accessed in the button click event handler
+  let recordedBlob;
+  
   // Create a video element for the live feed
   const liveVideo = document.createElement('video');
   liveVideo.autoplay = true;
@@ -93,13 +96,19 @@
           chunks.push(e.data);
         };
 
-        // Store the blob globally so it can be accessed in the button click event handler
-        let recordedBlob;
-
         mediaRecorder.onstop = function() {
           recordedBlob = new Blob(chunks, { type: 'video/webm' });
           chunks = [];
           const videoURL = URL.createObjectURL(recordedBlob);
+
+          // Get the existing videos array from localStorage, or initialize it to an empty array if it doesn't exist
+          let videos = JSON.parse(localStorage.getItem('videos')) || [];
+
+          // Add the new video URL to the videos array
+          videos.push(videoURL);
+
+          // Store the videos array in localStorage
+          localStorage.setItem('videos', JSON.stringify(videos));
 
           // Create a video element for the recorded video
           const recordedVideo = document.createElement('video');
@@ -117,15 +126,45 @@
         document.querySelector('.record-button-Rcd').addEventListener('click', function() {
           // Create a FormData object
           const formData = new FormData();
-          formData.append('video', recordedBlob, 'recorded.webm');
+          
+          // Get the current timestamp
+          const timestamp = Date.now();
+
+          // Append the video blob to the FormData object with the timestamp as the filename
+          formData.append('video', recordedBlob, `${timestamp}.webm`);
 
           // Send the FormData object to a server-side script
           fetch('http://localhost/upload.php', {
             method: 'POST',
             body: formData
           })
-          .then(response => response.text())
-          .then(data => console.log(data))
+          .then(response => {
+            if (response.ok) {
+              return response.text();
+            } else {
+              throw new Error('Upload failed');
+            }
+          })
+          .then(data => {
+            console.log(data);
+            if (data === 'Success') { // Replace 'Success' with the actual success message from your server-side script
+              // Get the existing messages array from localStorage, or initialize it to an empty array if it doesn't exist
+              let messages = JSON.parse(localStorage.getItem('messages')) || [];
+              
+              const successMessage = document.createElement('p');
+              successMessage.textContent = 'The upload is successful';
+              successMessage.style.color = 'green';
+
+              // Append the success message element to the body
+              document.body.appendChild(successMessage);
+              
+              // Store the messages array in localStorage
+              localStorage.setItem('messages', JSON.stringify(messages));
+
+              // Redirect to the video-diary-emotion.html page
+              window.location.href = 'video-diary-emotion.html'; // Replace with the actual URL of your video-diary-emotion.html page
+            }
+          })
           .catch(error => console.error(error));
         });
 
@@ -135,6 +174,7 @@
   } else {
     mediaRecorder.stop();
     this.textContent = 'Record';
+    isRecording = false;
   }
 });
 </script>

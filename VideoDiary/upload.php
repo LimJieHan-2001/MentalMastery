@@ -16,6 +16,8 @@
     }
 
     if(empty($errors) == true) {
+      // Append timestamp to filename
+      $file_name = time() . '_' . $file_name;
       move_uploaded_file($file_tmp, "uploads/".$file_name);
       echo "Success";
     } else {

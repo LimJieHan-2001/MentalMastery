@@ -6,6 +6,13 @@ import requests
 import os
 import glob
 
+import sys
+from logger import log_data
+
+# Get the video name and URL from the command line arguments
+video_name = sys.argv[1]
+video_url = sys.argv[2]
+
 # Load pre-trained model for facial emotion recognition
 model = DeepFace.build_model("Emotion")
 
@@ -98,6 +105,9 @@ print(f"The most common emotion in the video was: {most_common_emotion}")
 # At the end of your script, write the output to a file
 with open('emotion_output.txt', 'w') as f:
     f.write(f"The most common emotion in the video was: {most_common_emotion}")
+
+# Log the data
+log_data(video_name, video_url, most_common_emotion)
 
 # Release the capture and close all windows
 cap.release()

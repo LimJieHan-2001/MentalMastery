@@ -6,13 +6,6 @@ import requests
 import os
 import glob
 
-import sys
-from logger import log_data
-
-# Get the video name and URL from the command line arguments
-video_name = sys.argv[1]
-video_url = sys.argv[2]
-
 # Load pre-trained model for facial emotion recognition
 model = DeepFace.build_model("Emotion")
 
@@ -24,9 +17,6 @@ emotion_counter = Counter()
 
 # Load face cascade classifier
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
-
-# Open video file
-# video_path = "C:/XAMPP/htdocs/uploads/recorded.webm" //specify a path to test
 
 # Directory path
 dir_path = "C:/XAMPP/htdocs/uploads/"
@@ -104,10 +94,7 @@ print(f"The most common emotion in the video was: {most_common_emotion}")
 
 # At the end of your script, write the output to a file
 with open('emotion_output.txt', 'w') as f:
-    f.write(f"The most common emotion in the video was: {most_common_emotion}")
-
-# Log the data
-log_data(video_name, video_url, most_common_emotion)
+    f.write(f"{most_common_emotion}")
 
 # Release the capture and close all windows
 cap.release()

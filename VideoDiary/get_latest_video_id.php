@@ -11,8 +11,14 @@ usort($files, function($a, $b) use ($dir) {
 });
 
 // Get the most recently modified file
-$latest_file = $files[0];
+$video_id = $files[0];
+
+// Write the URL to a text file
+file_put_contents('latest_video_id.txt', $video_id);
+
+// Get the URL of the latest video
+$video_id = file_get_contents('latest_video_id.txt');
 
 // Return the filename
-echo $latest_file;
+// echo $video_id;
 ?>

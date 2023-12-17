@@ -17,8 +17,14 @@ usort($files, function($a, $b) use ($dir) {
 $latest_file = $files[0];
 
 // Create the URL of the latest video
-$latest_video_url = $url_path . $latest_file;
+$video_url = $url_path . $latest_file;
 
-// Return the URL
-echo $latest_video_url;
+// Write the URL to a text file
+file_put_contents('latest_video_url.txt', $video_url);
+
+// Get the URL of the latest video
+$video_url = file_get_contents('latest_video_url.txt');
+
+// // Return the URL
+// echo $latest_video_url;
 ?>

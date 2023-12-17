@@ -56,7 +56,7 @@ window.onload = function() {
   }
 
   // Send a request to your server-side script
-  fetch('http://localhost/AppDev/VideoDiary/get_latest_video.php')
+  fetch('http://localhost/AppDev/VideoDiary/get_latest_video_id.php')
     .then(response => {
       if (!response.ok) {
         throw new Error('Network response was not ok');

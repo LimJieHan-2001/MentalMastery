@@ -32,8 +32,34 @@
     </div>
   </div>
   <div class="auto-group-nust-yi9">
-    <img class="vector-1-v7b" src="./assets/vector-1-iL1.png"/>
-    <div class="group-33021-eZP">Video Diary dashboard</div>
   </div>
 </div>
 </body>
+
+<script>
+  fetch('get_emotion_from_database.php')
+      .then(response => response.json())
+      .then(data => {
+          console.log('Data:', data); // Log the data
+  
+          if (data.emotion === 'sad') {
+              // Create a new img element
+              const img = document.createElement('img');
+  
+              // Set the source of the img element to the image URL
+              img.src = data.imageUrl;
+  
+              // Set the alt attribute of the img element
+              img.alt = 'Happy Image';
+  
+              console.log('Image element:', img); // Log the img element
+  
+              // Select the div with the class 'auto-group-nust-yi9'
+              const div = document.querySelector('.auto-group-nust-yi9');
+  
+              // Append the img element to the div
+              div.appendChild(img);
+          }
+      })
+      .catch(error => console.error('Error:', error));
+</script>

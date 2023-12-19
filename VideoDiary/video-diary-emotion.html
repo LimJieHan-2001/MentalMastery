@@ -96,6 +96,18 @@ window.onload = function() {
 
       // Replace the 'Loading emotion analysis result...' text with the most common emotion
       outputDiv.textContent =  most_common_emotion_texts;
+
+      // After the emotion analysis is done, log the data
+      return fetch('http://localhost/AppDev/VideoDiary/log_video_diary_data.php');
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.text();
+    })
+    .then(log_response => {
+      console.log(log_response);
     })
     .catch(error => {
       console.error('There has been a problem with your fetch operation:', error);

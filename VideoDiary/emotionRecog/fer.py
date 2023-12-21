@@ -1,6 +1,7 @@
 import cv2
 from deepface import DeepFace
 from collections import Counter
+import matplotlib.pyplot as plt
 
 import requests
 import os
@@ -37,7 +38,8 @@ frame_width = int(cap.get(3))
 frame_height = int(cap.get(4))
 
 # Create a VideoWriter object
-out = cv2.VideoWriter('annotated_video.avi', cv2.VideoWriter_fourcc('D','I','V','X'), 10, (frame_width, frame_height))
+# out = cv2.VideoWriter('annotated_video.mp4', cv2.VideoWriter_fourcc(*'mp4v'), 10, (frame_width, frame_height))
+out = cv2.VideoWriter('annotated_video.webm', cv2.VideoWriter_fourcc(*'VP90'), 10, (frame_width, frame_height))
 
 while True:
     # Capture frame-by-frame
@@ -82,11 +84,11 @@ while True:
     out.write(frame)
 
     # Display the resulting frame
-    cv2.imshow('Real-time Emotion Detection', frame)
+    # cv2.imshow('Real-time Emotion Detection', frame)
 
     # Press 'q' to exit
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
+    # if cv2.waitKey(1) & 0xFF == ord('q'):
+    #     break
 
 # Determine the most frequently detected emotion
 most_common_emotion = emotion_counter.most_common(1)[0][0]
@@ -98,4 +100,4 @@ with open('emotion_output.txt', 'w') as f:
 
 # Release the capture and close all windows
 cap.release()
-cv2.destroyAllWindows()
+# cv2.destroyAllWindows()

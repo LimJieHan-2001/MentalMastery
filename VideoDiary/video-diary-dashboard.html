@@ -42,7 +42,7 @@
       .then(data => {
           console.log('Data:', data); // Log the data
   
-          if (data.emotion === 'sad') {
+          if (data.emotion === 'sad' || data.emotion === 'angry' || data.emotion === 'neutral') {
               // Create a new img element
               const img = document.createElement('img');
   

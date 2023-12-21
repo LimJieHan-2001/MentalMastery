@@ -22,8 +22,8 @@ if ($result->num_rows > 0) {
     // Log the emotion
     error_log("Emotion: " . $row['Emotion']);
 
-    // Check if the emotion is 'happy'
-    if ($row['Emotion'] == 'sad') {
+    // Check if the emotion is either 'sad' or 'angry'
+    if ($row['Emotion'] == 'sad' || $row['Emotion'] == 'angry'|| $row['Emotion'] == 'neutral') {
         // Define the path to the 'happy base' folder
         $dir = 'happyBase';
 

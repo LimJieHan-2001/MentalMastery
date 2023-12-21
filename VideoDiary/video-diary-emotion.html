@@ -35,8 +35,12 @@
     <div class="group-33033-4Em">
       <div class="your-entrys-emotion-analysis-pDw">Your entry’s emotion analysis</div>
       <div class="group-33032-sxu">
-        <div class="group-33030-q93">preview</div>
-          <source src="uploads/recorded.webm" type="video/webm">
+        <div class="group-33030-q93">
+          <video controls>
+            <source src="annotated_video.webm" type="video/webm">
+            Your browser does not support the video tag.
+          </video>
+        </div>
         <div class="auto-group-omzr-iCq">Loading emotion analysis result...</div>
       </div>
     </div>
@@ -47,41 +51,6 @@
 
 <script>
 window.onload = function() {
-  // Get the success message from localStorage
-  const message = localStorage.getItem('message');
-
-  if (message) {
-    // Display the success message
-    alert(message);
-  }
-
-  // Send a request to your server-side script
-  fetch('http://localhost/AppDev/VideoDiary/get_latest_video_id.php')
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-      return response.text();
-    })
-    .then(latest_file_name => {
-      // Create the URL of the latest video
-      let url = 'http://localhost/uploads/' + latest_file_name;
-
-      // Create a video player element
-      let videoPlayer = document.createElement('video');
-      videoPlayer.src = url;
-      videoPlayer.controls = true;
-
-      // Select the group-33030-q93 div
-      let videoContainer = document.querySelector('.group-33030-q93');
-
-      // Append the video player to the group-33030-q93 div
-      videoContainer.appendChild(videoPlayer);
-    })
-    .catch(error => {
-      console.error('There has been a problem with your fetch operation:', error);
-    });
-
   // Send a request to your server-side script to get the most common emotion
   fetch('http://localhost/AppDev/VideoDiary/run_fer.php')
     .then(response => {
@@ -98,7 +67,7 @@ window.onload = function() {
       outputDiv.textContent =  most_common_emotion_texts;
 
       // After the emotion analysis is done, log the data
-      return fetch('http://localhost/AppDev/VideoDiary/log_video_diary_data.php');
+      return fetch('http://localhost/AppDev/VideoDiary/create-log_video_diary_data.php');
     })
     .then(response => {
       if (!response.ok) {
@@ -108,6 +77,10 @@ window.onload = function() {
     })
     .then(log_response => {
       console.log(log_response);
+
+      // After the emotion analysis is done, load the video
+      let videoPlayer = document.querySelector('.group-33030-q93 video');
+      videoPlayer.load();
     })
     .catch(error => {
       console.error('There has been a problem with your fetch operation:', error);

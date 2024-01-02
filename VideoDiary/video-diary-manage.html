@@ -36,6 +36,7 @@
       <div class="group-33028-GLy">
         <div class="manage-Dn1">manage</div>
         <div id="tableContainer"></div>
+        <button class="next-button">Next</button>
       </div>
     </div>
   </div>
@@ -208,4 +209,9 @@ function deleteRow(id) {
     })
     .catch(error => console.error('Error:', error));
 }
+// Navigate to landing page
+document.querySelector('.next-button').addEventListener('click', function() {
+  window.location.href = 'http://localhost/AppDev/VideoDiary/video-diary-landing.html';
+});
+
 </script>

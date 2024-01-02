@@ -40,6 +40,18 @@
     </div>
   </div>
 </div>
+
+<form id="editForm" style="display: none;">
+  <input type="hidden" id="editId" name="id">
+  <label for="editTitle">Title:</label>
+  <input type="text" id="editTitle" name="title">
+  <label for="editDescription">Description:</label>
+  <input type="text" id="editDescription" name="description">
+  <label for="editEmotion">Emotion:</label>
+  <input type="text" id="editEmotion" name="emotion">
+  <input type="submit" value="Submit">
+</form>
+
 </body>
 
 <script>
@@ -62,7 +74,7 @@ window.onload = function() {
 
       // Create a header row
       const headerRow = document.createElement('tr');
-      ['ID', 'Title', 'Description', 'Emotion'].forEach(text => {
+      ['ID', 'Title', 'Description', 'Emotion', 'Edit', 'Delete'].forEach(text => {
         const th = document.createElement('th');
         th.textContent = text;
         headerRow.appendChild(th);
@@ -81,6 +93,28 @@ window.onload = function() {
           tr.appendChild(td);
         });
 
+        // Add the "Edit" button
+        const editTd = document.createElement('td');
+        const editButton = document.createElement('button');
+        editButton.textContent = 'Edit';
+        editButton.onclick = function() {
+          // Handle the edit action here
+          editRow(row.videoID);
+        };
+        editTd.appendChild(editButton);
+        tr.appendChild(editTd);
+
+        // Add the "Delete" button
+        const deleteTd = document.createElement('td');
+        const deleteButton = document.createElement('button');
+        deleteButton.textContent = 'Delete';
+        deleteButton.onclick = function() {
+          // Handle the delete action here
+          deleteRow(row.videoID);
+        };
+        deleteTd.appendChild(deleteButton);
+        tr.appendChild(deleteTd);
+
         // Append the table row to the table
         table.appendChild(tr);
       });
@@ -90,4 +124,88 @@ window.onload = function() {
     })
     .catch(error => console.error('Error:', error));
 };
+
+function editRow(id) {
+  // Send a GET request to the PHP script to get the current data for the row
+  fetch(`fetch_row.php?id=${id}`)
+    .then(response => response.json())
+    .then(data => {
+      // Populate the form fields with the current data
+      document.querySelector('#editId').value = data.videoID;
+      document.querySelector('#editTitle').value = data.videoTitle;
+      document.querySelector('#editDescription').value = data.description;
+      document.querySelector('#editEmotion').value = data.emotion;
+
+      // Show the form
+      document.querySelector('#editForm').style.display = 'block';
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+function refreshTable() {
+  // Clear the table
+  const container = document.querySelector('#tableContainer');
+  container.innerHTML = '';
+
+  // Reload the data
+  window.onload();
+}
+
+document.querySelector('#editForm').addEventListener('submit', function(event) {
+  // Prevent the form from being submitted
+  event.preventDefault();
+
+  // Get the form data
+  const id = document.querySelector('#editId').value;
+  const title = document.querySelector('#editTitle').value;
+  const description = document.querySelector('#editDescription').value;
+  const emotion = document.querySelector('#editEmotion').value;
+
+  // Send a POST request to the PHP script
+  fetch('update_row.php', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: `id=${id}&title=${encodeURIComponent(title)}&description=${encodeURIComponent(description)}&emotion=${encodeURIComponent(emotion)}`,
+  })
+    .then(response => response.json())
+    .then(data => {
+      // Check if there was an error
+      if (data.error) {
+        console.error('Error:', data.error);
+        return;
+      }
+
+      // Hide the form
+      document.querySelector('#editForm').style.display = 'none';
+
+      // Refresh the table
+      refreshTable();
+    })
+    .catch(error => console.error('Error:', error));
+});
+
+function deleteRow(id) {
+  // Send a POST request to the PHP script to delete the row
+  fetch('delete_row.php', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: `id=${id}`,
+  })
+    .then(response => response.json())
+    .then(data => {
+      // Check if there was an error
+      if (data.error) {
+        console.error('Error:', data.error);
+        return;
+      }
+
+      // Remove the row from the table
+      refreshTable();
+    })
+    .catch(error => console.error('Error:', error));
+}
 </script>

@@ -51,12 +51,13 @@
         <div class="group-33036-SsB">
           <div class="rectangle-139-AYH">
           </div>
-          <div class="record-button-hHK">record</div>
+          <button class="record-button-hHK">record</button>
         </div>
         <div class="group-33037-Y33">
           <div class="rectangle-140-UxH">
           </div>
-          <div class="record-button-Rcd">upload</div>
+          <button class="record-button-Rcd">upload</button>
+          <button class="next-button">Next</button>
         </div>
       </div>
     </div>
@@ -134,7 +135,7 @@
           formData.append('video', recordedBlob, `${timestamp}.webm`);
 
           // Send the FormData object to a server-side script
-          fetch('http://localhost/upload.php', {
+          fetch('http://localhost/AppDev/VideoDiary/create-log_video_diary_data.php', {
             method: 'POST',
             body: formData
           })
@@ -176,5 +177,10 @@
     this.textContent = 'Record';
     isRecording = false;
   }
+});
+
+document.querySelector('.next-button').addEventListener('click', function() {
+  // Navigate to a new page
+  window.location.href = 'http://localhost/AppDev/VideoDiary/video-diary-emotion.html';
 });
 </script>

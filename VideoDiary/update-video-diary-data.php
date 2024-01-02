@@ -7,7 +7,7 @@ $videoID_to_update = 'your_video_id_here';
 $new_emotion = 'your_new_emotion_here';
 
 // Define the SQL statement
-$sql = "UPDATE `video details` SET `Emotion` = '$new_emotion' WHERE `videoID` = '$videoID_to_update'";
+$sql = "UPDATE `video_diary` SET `emotion` = '$new_emotion' WHERE `videoID` = '$videoID_to_update'";
 
 // Execute the SQL statement
 if ($conn->query($sql) === TRUE) {

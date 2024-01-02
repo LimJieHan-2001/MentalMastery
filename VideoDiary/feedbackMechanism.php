@@ -3,7 +3,7 @@
 include 'connect_database.php';
 
 // Define the SQL statement
-$sql = "SELECT `Emotion` FROM `video details` ORDER BY `videoID` DESC LIMIT 1";
+$sql = "SELECT `emotion` FROM `video_diary` ORDER BY `videoID` DESC LIMIT 1";
 
 // Execute the SQL statement
 $result = $conn->query($sql);

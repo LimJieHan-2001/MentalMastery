@@ -42,6 +42,7 @@
           </video>
         </div>
         <div class="auto-group-omzr-iCq">Loading emotion analysis result...</div>
+        <button class="next-button">Next</button>
       </div>
     </div>
     <img class="vector-1-mS1" src="./assets/vector-1-vTT.png"/>
@@ -86,5 +87,10 @@ window.onload = function() {
       console.error('There has been a problem with your fetch operation:', error);
     });
 }
+
+// Navigate to mood enhance page
+document.querySelector('.next-button').addEventListener('click', function() {
+  window.location.href = 'http://localhost/AppDev/VideoDiary/video-diary-mood-enhance.html';
+});
 </script>
 

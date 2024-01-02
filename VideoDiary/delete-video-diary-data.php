@@ -6,7 +6,7 @@ include 'connect_database.php';
 $videoID_to_delete = 'your_video_id_here';
 
 // Define the SQL statement
-$sql = "DELETE FROM `video details` WHERE `videoID` = '$videoID_to_delete'";
+$sql = "DELETE FROM `video_diary` WHERE `videoID` = '$videoID_to_delete'";
 
 // Execute the SQL statement
 if ($conn->query($sql) === TRUE) {

@@ -10,9 +10,9 @@ include 'get_emotion.php';
 // echo "most_common_emotion: $most_common_emotion<br>";
 
 $servername = "localhost";  // replace with your server name
-$username = "loke";  // replace with your username
+$username = "rk";  // replace with your username
 $password = "password123";  // replace with your password
-$dbname = "videodiarydb";  // replace with your database name
+$dbname = "mental_masterydb";  // replace with your database name
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
@@ -24,7 +24,7 @@ if ($conn->connect_error) {
 echo "Connected successfully";
 
 // Prepare an SQL statement
-$sql = "INSERT INTO `video details`(`videoID`, `videoURL`, `Emotion`) VALUES (?, ?, ?)";
+$sql = "INSERT INTO `video_diary`(`videoID`, `videoURL`, `emotion`) VALUES (?, ?, ?)";
 
 // Create a prepared statement
 $stmt = $conn->prepare($sql);

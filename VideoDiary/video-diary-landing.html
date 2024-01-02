@@ -37,9 +37,21 @@
     </div>
     <img class="videocameraperspectivemattes-FQD" src="./assets/videocameraperspectivemattes.png"/>
     <div class="video-diary-xZX">Video Diary</div>
-    <div class="buttonview-DEZ">New entry</div>
-    <div class="buttonview-Teh">dashboard</div>
-    <div class="buttonview-js7">manage</div>
+    <button class="buttonview-DEZ">New entry</button>
+    <button class="buttonview-Teh">dashboard</button>
+    <button class="buttonview-js7">manage</button>
   </div>
 </div>
 </body>
+
+<script>
+  document.querySelector('.buttonview-DEZ').addEventListener('click', function() {
+    window.location.href = 'http://localhost/AppDev/VideoDiary/video-diary-entry.html';
+  });
+  document.querySelector('.buttonview-Teh').addEventListener('click', function() {
+    window.location.href = 'http://localhost/AppDev/VideoDiary/video-diary-dashboard0.html';
+  });
+  document.querySelector('.buttonview-js7').addEventListener('click', function() {
+    window.location.href = 'http://localhost/AppDev/VideoDiary/video-diary-manage.html';
+  });
+</script>

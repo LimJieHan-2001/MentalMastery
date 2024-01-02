@@ -1,6 +1,6 @@
 <?php
 // Directory path
-$dir = 'C:\\XAMPP\\htdocs\\uploads\\';
+$dir = __DIR__ . '/uploads/';
 
 // Get filenames
 $files = array_diff(scandir($dir), array('.', '..'));

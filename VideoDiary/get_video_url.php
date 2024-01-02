@@ -1,9 +1,9 @@
 <?php
 // Directory path
-$dir = 'C:\\XAMPP\\htdocs\\uploads\\';
+$dir =  __DIR__ . '/uploads/';
 
 // URL path
-$url_path = 'http://localhost/uploads/';
+$url_path = 'http://localhost/AppDev/VideoDiary/uploads/';
 
 // Get filenames
 $files = array_diff(scandir($dir), array('.', '..'));

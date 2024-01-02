@@ -79,108 +79,120 @@
   liveVideo.autoplay = true;
   liveVideo.muted = true;
 
-  // Insert the live video element into rectangle-139-AYH
+  // create video element for the live webcam feed
   const liveContainer = document.querySelector('.rectangle-139-AYH');
   liveContainer.appendChild(liveVideo);
 
+  // Function to display an error message
+  function displayError(message) {
+    const errorElement = document.createElement('div');
+    errorElement.textContent = message;
+    errorElement.style.color = 'red';
+    document.body.appendChild(errorElement);
+  }
+
   document.querySelector('.record-button-hHK').addEventListener('click', function() {
-  if (!isRecording) {
-    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-      .then(stream => {
-        // Display the live camera feed
-        liveVideo.srcObject = stream;
+    if (!isRecording) { // If it is not recording, start recording
+      navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+        .then(stream => {
+          // Display the live camera feed
+          liveVideo.srcObject = stream;
 
-        mediaRecorder = new MediaRecorder(stream);
-        mediaRecorder.start();
+          mediaRecorder = new MediaRecorder(stream);
+          mediaRecorder.start();
 
-        mediaRecorder.ondataavailable = function(e) {
-          chunks.push(e.data);
-        };
+          // Change the button text and set isRecording to true right after starting the recording
+          this.textContent = 'Stop';
+          isRecording = true;
 
-        mediaRecorder.onstop = function() {
-          recordedBlob = new Blob(chunks, { type: 'video/webm' });
-          chunks = [];
-          const videoURL = URL.createObjectURL(recordedBlob);
+          mediaRecorder.ondataavailable = function(e) {
+            chunks.push(e.data);
+          };
 
-          // Get the existing videos array from localStorage, or initialize it to an empty array if it doesn't exist
-          let videos = JSON.parse(localStorage.getItem('videos')) || [];
+          mediaRecorder.onstop = function() {
+            recordedBlob = new Blob(chunks, { type: 'video/webm' });
+            chunks = [];
+            const videoURL = URL.createObjectURL(recordedBlob);
 
-          // Add the new video URL to the videos array
-          videos.push(videoURL);
+            // Create a FormData object
+            const formData = new FormData();
 
-          // Store the videos array in localStorage
-          localStorage.setItem('videos', JSON.stringify(videos));
+            // Get the current timestamp
+            const timestamp = Date.now();
 
-          // Create a video element for the recorded video
-          const recordedVideo = document.createElement('video');
-          recordedVideo.src = videoURL;
-          recordedVideo.controls = true;
-          recordedVideo.load();
+            // Append the video blob to the FormData object with the timestamp as the filename
+            formData.append('video', recordedBlob, `${timestamp}.webm`);
 
-          // Insert the recorded video element into rectangle-140-UxH
-          const recordedContainer = document.querySelector('.rectangle-140-UxH');
-          recordedContainer.innerHTML = ''; // Clear the container
-          recordedContainer.appendChild(recordedVideo); // Append the video element
-        };
-
-        // Add an event listener to the record-button-Rcd button
-        document.querySelector('.record-button-Rcd').addEventListener('click', function() {
-          // Create a FormData object
-          const formData = new FormData();
-          
-          // Get the current timestamp
-          const timestamp = Date.now();
-
-          // Append the video blob to the FormData object with the timestamp as the filename
-          formData.append('video', recordedBlob, `${timestamp}.webm`);
-
-          // Send the FormData object to a server-side script
-          fetch('http://localhost/AppDev/VideoDiary/create-log_video_diary_data.php', {
-            method: 'POST',
-            body: formData
-          })
-          .then(response => {
-            if (response.ok) {
-              return response.text();
-            } else {
-              throw new Error('Upload failed');
-            }
-          })
-          .then(data => {
-            console.log(data);
-            if (data === 'Success') { // Replace 'Success' with the actual success message from your server-side script
-              // Get the existing messages array from localStorage, or initialize it to an empty array if it doesn't exist
-              let messages = JSON.parse(localStorage.getItem('messages')) || [];
-              
-              const successMessage = document.createElement('p');
-              successMessage.textContent = 'The upload is successful';
-              successMessage.style.color = 'green';
-
-              // Append the success message element to the body
-              document.body.appendChild(successMessage);
-              
-              // Store the messages array in localStorage
-              localStorage.setItem('messages', JSON.stringify(messages));
-
-              // Redirect to the video-diary-emotion.html page
-              window.location.href = 'video-diary-emotion.html'; // Replace with the actual URL of your video-diary-emotion.html page
-            }
-          })
-          .catch(error => console.error(error));
+            // Send the FormData object to upload.php
+            fetch('upload.php', {
+              method: 'POST',
+              body: formData
+            })
+            .then(response => {
+              if (response.ok) {
+                return response.text();
+              } else {
+                throw new Error('Upload failed');
+              }
+            })
+            .then(data => {
+              console.log(data);
+              if (data.trim() === 'Success') { // Replace 'Success' with the actual success message from your server-side script
+                // Video upload was successful, now you can run create-log_video_diary_data.php
+              }
+            })
+            .catch(error => {
+              console.error(error);
+              displayError(error.message); // Display the error message
+            });
+          };
         });
-
-        this.textContent = 'Stop';
-        isRecording = true;
-      });
-  } else {
+    } else {
+      mediaRecorder.stop(); // Stop the recording
+      this.textContent = 'Record';
+      isRecording = false;
+    }
+  });
+  // Add an event listener to the record-button-Rcd button
+  document.querySelector('.record-button-Rcd').addEventListener('click', function() {
+    if (isRecording) { // If it is still recording, stop the recording
     mediaRecorder.stop();
     this.textContent = 'Record';
     isRecording = false;
-  }
-});
+    } else if (recordedBlob) { // If it is not recording and recordedBlob is defined, upload the video
+      // Create a FormData object
+      const formData = new FormData();
+      
+      // Get the current timestamp
+      const timestamp = Date.now();
 
-document.querySelector('.next-button').addEventListener('click', function() {
-  // Navigate to a new page
-  window.location.href = 'http://localhost/AppDev/VideoDiary/video-diary-emotion.html';
-});
+      // Append the video blob to the FormData object with the timestamp as the filename
+      formData.append('video', recordedBlob, `${timestamp}.webm`);
+
+      // Send the FormData object to a server-side script
+      fetch('http://localhost/AppDev/VideoDiary/create-log_video_diary_data.php', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => {
+        if (response.ok) {
+          return response.text();
+        } else {
+          throw new Error('Upload failed');
+        }
+      })
+      .catch(error => {
+        console.error(error);
+        displayError(error.message); // Display the error message
+      });
+    } else {
+      console.error('No recorded video to upload');
+      displayError('No recorded video to upload'); // Display the error message
+    }
+  });
+
+  // Navigate to emotion page
+  document.querySelector('.next-button').addEventListener('click', function() {
+    window.location.href = 'http://localhost/AppDev/VideoDiary/video-diary-emotion.html';
+  });
 </script>

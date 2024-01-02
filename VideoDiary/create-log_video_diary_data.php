@@ -4,15 +4,10 @@ include 'get_latest_video_id.php';
 include 'get_video_url.php';
 include 'get_emotion.php';
 
-// For debugging - Print the values of the variables
-// echo "video_id: $video_id<br>";
-// echo "video_url: $video_url<br>";
-// echo "most_common_emotion: $most_common_emotion<br>";
-
-$servername = "localhost";  // replace with your server name
-$username = "rk";  // replace with your username
-$password = "password123";  // replace with your password
-$dbname = "mental_masterydb";  // replace with your database name
+$servername = "localhost";  
+$username = "rk"; 
+$password = "password123";
+$dbname = "mental_masterydb";
 
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
@@ -23,24 +18,46 @@ if ($conn->connect_error) {
 }
 echo "Connected successfully";
 
-// Prepare an SQL statement
-$sql = "INSERT INTO `video_diary`(`videoID`, `videoURL`, `emotion`) VALUES (?, ?, ?)";
+// Prepare an SQL statement to check if videoID already exists
+$checkSql = "SELECT * FROM `video_diary` WHERE `videoID` = ?";
 
 // Create a prepared statement
-$stmt = $conn->prepare($sql);
-
+$checkStmt = $conn->prepare($checkSql);
 
 // Bind parameters to the prepared statement
-$stmt->bind_param("sss", $video_id, $video_url, $most_common_emotion);
+$checkStmt->bind_param("s", $video_id);
 
 // Execute the prepared statement
-$stmt->execute();
+$checkStmt->execute();
 
-$conn->commit();
+// Get the result of the query
+$result = $checkStmt->get_result();
 
-echo "New record created successfully";
+// If the videoID already exists in the database, don't insert a new record
+if ($result->num_rows > 0) {
+  echo "Record already exists";
+} else {
+  // Prepare an SQL statement
+  $sql = "INSERT INTO `video_diary`(`videoID`, `videoURL`, `emotion`) VALUES (?, ?, ?)";
 
-// Close the prepared statement
-$stmt->close();
+  // Create a prepared statement
+  $stmt = $conn->prepare($sql);
 
+  // Bind parameters to the prepared statement
+  $stmt->bind_param("sss", $video_id, $video_url, $most_common_emotion);
+
+  // Execute the prepared statement
+  $stmt->execute();
+
+  echo "New record created successfully";
+
+  // Close the prepared statement
+  $stmt->close();
+}
+
+// Close the checkStmt prepared statement
+$checkStmt->close();
+
+// Close the connection
+$conn->close();
 ?>

@@ -20,7 +20,7 @@ emotion_counter = Counter()
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
 # Directory path
-dir_path = "C:/XAMPP/htdocs/uploads/"
+dir_path = "C:/XAMPP/htdocs/AppDev/VideoDiary/uploads"
 
 # Get list of all files, and sort them by creation date
 files = glob.glob(dir_path + "*.webm")

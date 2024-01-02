@@ -13,17 +13,11 @@ $response = [];
 
 // Check if the SQL statement returned any rows
 if ($result->num_rows > 0) {
-    // Log the number of rows
-    error_log("Number of rows: " . $result->num_rows);
-
     // Fetch the first row
     $row = $result->fetch_assoc();
 
-    // Log the emotion
-    error_log("Emotion: " . $row['Emotion']);
-
     // Check if the emotion is either 'sad' or 'angry'
-    if ($row['Emotion'] == 'sad' || $row['Emotion'] == 'angry'|| $row['Emotion'] == 'neutral') {
+    if ($row['emotion'] == 'sad' || $row['emotion'] == 'angry'|| $row['emotion'] == 'neutral') {
         // Define the path to the 'happy base' folder
         $dir = 'happyBase';
 
@@ -34,7 +28,7 @@ if ($result->num_rows > 0) {
         $random_file = $files[array_rand($files)];
 
         // Set the emotion and the image URL in the response
-        $response = ['emotion' => $row['Emotion'], 'imageUrl' => "$dir/$random_file"];
+        $response = ['emotion' => $row['emotion'], 'imageUrl' => "$dir/$random_file"];
     }
 }
 

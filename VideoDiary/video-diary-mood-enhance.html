@@ -39,16 +39,19 @@
 
 <script>
   fetch('get_emotion_from_database.php')
-      .then(response => response.json())
+      .then(response => response.text())
       .then(data => {
-          console.log('Data:', data); // Log the data
+          console.log('Response text:', data); // Log the data
   
-          if (data.emotion === 'sad' || data.emotion === 'angry' || data.emotion === 'neutral') {
+          // Try to parse the response text as JSON
+          const jsonData = JSON.parse(data);
+          
+          if (jsonData.emotion === 'sad' || jsonData.emotion === 'angry' || jsonData.emotion === 'neutral') {
               // Create a new img element
               const img = document.createElement('img');
   
               // Set the source of the img element to the image URL
-              img.src = data.imageUrl;
+              img.src = jsonData.imageUrl;
   
               // Set the alt attribute of the img element
               img.alt = 'Happy Image';

@@ -35,27 +35,59 @@
     <div class="group-33029-7U5">
       <div class="group-33028-GLy">
         <div class="manage-Dn1">manage</div>
-        <div class="group-33027-Ka9">
-          <div class="group-33014-GVP">thumbnial</div>
-          <div class="group-33013-j85">Title</div>
-          <div class="group-33015-bRB">description</div>
-          <div class="group-33016-rru">emotion</div>
-          <div class="group-33017-Xi9">edit</div>
-        </div>
-      </div>
-      <div class="group-33019-Q1F">
-        <div class="rectangle-139-YNM">
-        </div>
-        <p class="my-first-entry-svR">My First Entry</p>
-        <p class="first-try-on-video-diary-CC1">first try on video diary</p>
-        <p class="happy-6oB">Happy</p>
-        <div class="group-33018-pz5">
-          <img class="toolsperspectivemattes-8zm" src="./assets/toolsperspectivemattes.png"/>
-          <img class="basketperspectivemattes-fE1" src="./assets/basketperspectivemattes.png"/>
-        </div>
+        <div id="tableContainer"></div>
       </div>
     </div>
-    <img class="vector-1-a65" src="./assets/vector-1-Xqb.png"/>
   </div>
 </div>
 </body>
+
+<script>
+window.onload = function() {
+  // Send a GET request to the PHP script
+  fetch('fetch_manage_database.php')
+    .then(response => response.json()) // Parse the response as JSON
+    .then(data => {
+      // Check if there was an error
+      if (data.error) {
+        console.error('Error:', data.error);
+        return;
+      }
+
+      // Find the element to append the data to
+      const container = document.querySelector('#tableContainer');
+
+      // Create a table
+      const table = document.createElement('table');
+
+      // Create a header row
+      const headerRow = document.createElement('tr');
+      ['ID', 'Title', 'Description', 'Emotion'].forEach(text => {
+        const th = document.createElement('th');
+        th.textContent = text;
+        headerRow.appendChild(th);
+      });
+      table.appendChild(headerRow);
+
+      // Iterate over the rows in the data
+      data.forEach(row => {
+        // Create a new table row for each row
+        const tr = document.createElement('tr');
+
+        // Create a table data for each property in the row
+        [row.videoID, row.videoTitle, row.description, row.emotion].forEach(text => {
+          const td = document.createElement('td');
+          td.textContent = text;
+          tr.appendChild(td);
+        });
+
+        // Append the table row to the table
+        table.appendChild(tr);
+      });
+
+      // Append the table to the container
+      container.appendChild(table);
+    })
+    .catch(error => console.error('Error:', error));
+};
+</script>

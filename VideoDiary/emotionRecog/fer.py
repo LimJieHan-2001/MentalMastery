@@ -20,17 +20,22 @@ emotion_counter = Counter()
 face_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
 # Directory path
-dir_path = "C:/XAMPP/htdocs/AppDev/VideoDiary/uploads"
+dir_path = "C:/XAMPP/htdocs/AppDev/VideoDiary/uploads/"
 
 # Get list of all files, and sort them by creation date
 files = glob.glob(dir_path + "*.webm")
 files.sort(key=os.path.getctime, reverse=True)
 
-# Get the most recently created file
-latest_file = files[0]
+# Check if files list is not empty
+if files:
+    # Get the most recently created file
+    latest_file = files[0]
 
-# Now you can use latest_file as your video path
-video_path = latest_file
+    # Now you can use latest_file as your video path
+    video_path = latest_file
+else:
+    print("No .webm files found in directory.")
+    # Handle the case where no .webm files are found
 
 cap = cv2.VideoCapture(video_path)
 
@@ -39,7 +44,20 @@ frame_height = int(cap.get(4))
 
 # Create a VideoWriter object
 # out = cv2.VideoWriter('annotated_video.mp4', cv2.VideoWriter_fourcc(*'mp4v'), 10, (frame_width, frame_height))
-out = cv2.VideoWriter('annotated_video.webm', cv2.VideoWriter_fourcc(*'VP90'), 10, (frame_width, frame_height))
+
+# Get the original video's filename
+original_filename = os.path.basename(latest_file)
+
+# Remove the extension from the filename
+original_filename_without_ext = os.path.splitext(original_filename)[0]
+
+# Create the directory if it doesn't exist
+os.makedirs('uploads/annotated', exist_ok=True)
+
+# Create the new filename
+result_filename = f'uploads/annotated/fer_{original_filename_without_ext}.webm'
+
+out = cv2.VideoWriter(result_filename.replace('.webm', '.mp4'), cv2.VideoWriter_fourcc(*'mp4v'), 10, (frame_width, frame_height))
 
 while True:
     # Capture frame-by-frame

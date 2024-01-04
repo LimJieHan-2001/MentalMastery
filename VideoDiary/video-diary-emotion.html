@@ -37,7 +37,6 @@
       <div class="group-33032-sxu">
         <div class="group-33030-q93">
           <video controls>
-            <source src="annotated_video.webm" type="video/webm">
             Your browser does not support the video tag.
           </video>
         </div>
@@ -52,6 +51,25 @@
 
 <script>
 window.onload = function() {
+  let filename; // Define filename here
+
+  // Fetch the latest video filename from latest_video.php
+  fetch('latest_video.php')
+    .then(response => response.text())
+    .then(fetched_filename => {
+      filename = fetched_filename; // Assign the fetched filename to filename
+
+      // Find the video element
+      const video = document.querySelector('.group-33030-q93 video');
+
+      // Set the source of the video element to the latest video
+      video.src = `uploads/${filename}`;
+
+      // Load the video
+      video.load();
+    })
+    .catch(error => console.error('Error:', error));
+
   // Send a request to your server-side script to get the most common emotion
   fetch('http://localhost/AppDev/VideoDiary/run_fer.php')
     .then(response => {
@@ -67,8 +85,14 @@ window.onload = function() {
       // Replace the 'Loading emotion analysis result...' text with the most common emotion
       outputDiv.textContent =  most_common_emotion_texts;
 
-      // After the emotion analysis is done, log the data
-      return fetch('http://localhost/AppDev/VideoDiary/create-log_video_diary_data.php');
+      // Make a POST request to update_emotion.php
+      return fetch('update_emotion.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `filename=${filename}&emotion=${most_common_emotion_texts}`,
+      });
     })
     .then(response => {
       if (!response.ok) {

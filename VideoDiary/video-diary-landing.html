@@ -40,6 +40,7 @@
     <button class="buttonview-DEZ">New entry</button>
     <button class="buttonview-Teh">dashboard</button>
     <button class="buttonview-js7">manage</button>
+    <button class="buttonview-payment">payment</button>
   </div>
 </div>
 </body>
@@ -54,4 +55,38 @@
   document.querySelector('.buttonview-js7').addEventListener('click', function() {
     window.location.href = 'http://localhost/AppDev/VideoDiary/video-diary-manage.html';
   });
+//   document.querySelector('.buttonview-payment').addEventListener('click', function() {
+//   window.location.href = 'http://localhost/AppDev/VideoDiary/video-diary-payment.html';
+// });
+
+  //payment
+  src="https://js.stripe.com/v3/"
+  
+  // initialise stripe
+  var stripe = Stripe('your-publishable-key');  
+
+  document.querySelector('.buttonview-payment').addEventListener('click', function(e) {
+  // Create a new Checkout Session using the server-side endpoint you
+  // created in step 4.
+  fetch('/create-checkout-session', {
+    method: 'POST',
+  })
+  .then(function(response) {
+    return response.json();
+  })
+  .then(function(session) {
+    return stripe.redirectToCheckout({ sessionId: session.id });
+  })
+  .then(function(result) {
+    // If redirectToCheckout fails due to a browser or network
+    // error, you should display the localized error message to your
+    // customer using error.message.
+    if (result.error) {
+      alert(result.error.message);
+    }
+  })
+  .catch(function(error) {
+    console.error('Error:', error);
+  });
+});
 </script>

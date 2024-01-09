@@ -150,7 +150,7 @@ body {
 }
 .video-diary-landing-fvZ .group-33020-baZ .rectangle-130-jAy {
   width: 98rem;
-  height: 69.4rem;
+  height: 78rem;
   position: absolute;
   left: 0;
   top: 8.6rem;
@@ -243,4 +243,27 @@ body {
   justify-content: center;
   background-color: #003049;
   border-radius: 8.3rem;
+}
+.video-diary-landing-fvZ .group-33020-baZ .buttonview-payment{
+  width: 38rem;
+  height: 7.2rem;
+  position: absolute;
+  left: 30rem;
+  top: 72.9rem;
+  font-size: 2rem;
+  font-weight: 600;
+  line-height: 1.375;
+  letter-spacing: 0.2rem;
+  text-transform: uppercase;
+  color: #ffffff;
+  font-family: Outfit, 'Source Sans Pro';
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #003049;
+  border-radius: 8.3rem;
+}
+.video-diary-landing-fvZ .group-33020-baZ:hover .buttonview-payment:hover{
+  background-color: #45a049;
 }
